@@ -43,12 +43,14 @@ module Faktory
     end
 
     def terminate(wait = false)
+      logger.info { "Processor#terminate" }
       @done = true
       return if !@thread
       @thread.value if wait
     end
 
     def kill(wait = false)
+      logger.info { "Processor#kill" }
       @done = true
       return if !@thread
       # unlike the other actors, terminate does not wait
@@ -61,6 +63,7 @@ module Faktory
     end
 
     def start
+      logger.info { "Processor#start" }
       @thread ||= safe_thread("processor", &method(:run))
     end
 
