@@ -62,7 +62,7 @@ module Faktory
 
     def close
       return unless @sock
-      debug "Closing connection to Faktory server"
+      Faktory.logger.info "Closing connection to Faktory server"
       command "END"
       @sock.close
       @sock = nil
@@ -251,7 +251,7 @@ module Faktory
 
     # NB: aliased by faktory/testing
     def open_socket(timeout = DEFAULT_TIMEOUT)
-      debug "Opening connection to Faktory server"
+      Faktory.logger.info "Opening connection to Faktory server"
       if tls?
         require "openssl"
         sock = TCPSocket.new(@location.hostname, @location.port)
@@ -324,13 +324,13 @@ module Faktory
       begin
         yield
       rescue SystemCallError, SocketError, TimeoutError, OpenSSL::SSL::SSLError => e
-        debug "Error in Faktory transaction. Rescuing from #{e.class}: #{e.message}"
+        Faktory.logger.info "Error in Faktory transaction. Rescuing from #{e.class}: #{e.message}"
         if retryable
-          debug "Retrying transaction"
+          Faktory.logger.info "Retrying transaction"
           retryable = false
 
           begin
-            debug "Closing connection to Faktory server"
+            Faktory.logger.info "Closing connection to Faktory server"
             @sock.close
           rescue
             nil
